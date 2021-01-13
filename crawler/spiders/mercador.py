@@ -12,22 +12,18 @@ class MercadorSpider(scrapy.Spider):
 
     def parse(self, response):
         # 当前页产品处理
-        i = 0
         products = response.css('.ui-search-layout__item')
         for product in products:
             item = CrawlerItem()
             item['src'] = product.xpath('.//a[@class="ui-search-link"]/@href').get()
             item['pid'] = product.xpath('.//input[@name="itemId"]/@value').get()
             yield scrapy.Request(item['src'],self.parse_item,cb_kwargs={'item':item})
-            i = i+1
-            if(i==6):
-                break
 
         # 下一页
-        # next_page = response.css('a[title="Siguiente"]')
-        # if(next_page):
-        #     url = response.css('a[title="Siguiente"]').attrib['href']
-        #     yield scrapy.Request(url, self.parse)
+        next_page = response.css('a[title="Siguiente"]')
+        if(next_page):
+            url = response.css('a[title="Siguiente"]').attrib['href']
+            yield scrapy.Request(url, self.parse)
 
     def parse_item(self, response, item):
         item['img'] = response.css('.ui-pdp-image').xpath('./@src').getall()[0]

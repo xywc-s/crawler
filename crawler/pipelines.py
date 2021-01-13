@@ -32,7 +32,7 @@ class CrawlerPipeline:
         adapter['created_at'] = datetime.now().timestamp()
         self.items.append(adapter.asdict())
         self.db[f'kw-{spider.keyword}'].insert_one(adapter.asdict())
-        return item['pid']
+        return f"成功抓取关键词 [ {spider.keyword} ] 下的产品 {item['pid']} "
 
     def open_spider(self, spider):
         self.client = pymongo.MongoClient(self.mongo_uri)
