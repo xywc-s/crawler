@@ -49,7 +49,7 @@ headers = {
 
 async def get_ip():
     async with ClientSession() as session:
-        async with session.get('http://http.tiqu.alibabaapi.com/getip?num=46&type=2&pack=61371&port=1&ts=1&ys=1&cs=1&lb=1&pb=4&regions=') as res:
+        async with session.get('http://http.tiqu.alibabaapi.com/getip?num=50&type=2&pack=61371&port=1&ts=1&ys=1&cs=1&lb=1&pb=4&regions=') as res:
             res = json.loads(await res.text())
             print('res', res)
             if res['success']:
