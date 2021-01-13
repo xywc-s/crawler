@@ -49,7 +49,7 @@ headers = {
 
 async def get_ip():
     async with ClientSession() as session:
-        async with session.get('http://http.tiqu.alibabaapi.com/getip?num=10&type=2&pack=61371&port=1&ts=1&ys=1&cs=1&lb=1&pb=4&regions=') as res:
+        async with session.get('http://http.tiqu.alibabaapi.com/getip?num=1&type=2&pack=61371&port=1&ts=1&ys=1&cs=1&lb=1&pb=4&regions=') as res:
             res = json.loads(await res.text())
             print('res', res)
             if res['success']:
@@ -68,7 +68,7 @@ async def get_proxy():
             res = json.loads(await res.text())
             if res['success']:
                 print('领取套餐成功')
-                get_ip()
+                await get_ip()
             else:
                 print('领取套餐失败')
 
@@ -82,9 +82,9 @@ async def taiyang_proxy():
                 async with session.get('http://ty-http-d.hamir.net/index/users/get_day_free_pack', headers=headers) as res:
                     res = json.loads(await res.text())
                     print('res', res)
-                    if int(res['code']) == 1:
+                    if int(res['code']) == 1 or int(res['code']) == -1:
                         print('免费套餐领取成功')
-                        get_ip()
+                        await get_ip()
                     else:
                         print('免费套餐领取失败')
             else:
@@ -101,13 +101,13 @@ async def crawler():
 loop = asyncio.get_event_loop()
 
 # 获取IP
-loop.run_until_complete(get_ip())
+# loop.run_until_complete(get_ip())
 
 # 直接领取
 # loop.run_until_complete(get_proxy())
 
 # 登录后领
-# loop.run_until_complete(taiyang_proxy())
+loop.run_until_complete(taiyang_proxy())
 
 # 开启爬虫 - 需要开启爬虫服务器
 # loop.run_until_complete(crawler())
