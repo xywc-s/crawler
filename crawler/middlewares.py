@@ -114,11 +114,4 @@ class ProxyMiddleware(object):
     def process_request(self, request, spider):
         ip = DB().random_ip()
         proxy = f"http://{ip['ip']}:{ip['port']}"
-        print('proxy', proxy)
-        # proxies = {
-        #     "http": proxy,
-        #     "https": proxy
-        # }
-        # resp = requests.get('https://www.baidu.com', proxies=proxies)
-        # print('code', resp.status_code)
         request.meta['proxy'] = proxy
