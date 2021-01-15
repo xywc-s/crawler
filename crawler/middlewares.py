@@ -112,6 +112,9 @@ class UAMiddleware(object):
 
 class ProxyMiddleware(object):
     def process_request(self, request, spider):
-        ip = DB().random_ip()
-        proxy = f"http://{ip['ip']}:{ip['port']}"
-        request.meta['proxy'] = proxy
+        try:
+            ip = DB().random_ip()
+            proxy = f"http://{ip['ip']}:{ip['port']}"
+            request.meta['proxy'] = proxy
+        except Exception as e:
+            raise e

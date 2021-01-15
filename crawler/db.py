@@ -36,7 +36,7 @@ class DB:
             ip = IP.find({}).limit(1).skip(random_int)
             return list(ip)[0]
         else:
-            raise '没有可用的IP'
+            raise Exception('没有可用的IP')
 
     def insert_ips(self, ips):
         col = self.db['ip']

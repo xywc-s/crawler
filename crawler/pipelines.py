@@ -59,3 +59,11 @@ class DuplicatesPipeline:
         else:
             self.ids_seen.add(adapter['pid'])
             return item
+
+class SalesFilterPipeline:
+    def process_item(self, item, spider):
+        adapter = ItemAdapter(item)
+        if not adapter['sales']:
+            raise DropItem(f"{item['pid']}没有销量,直接丢弃: {item!r}")
+        else:
+            return item
