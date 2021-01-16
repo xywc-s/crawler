@@ -55,7 +55,7 @@ class DuplicatesPipeline:
     def process_item(self, item, spider):
         adapter = ItemAdapter(item)
         if adapter['pid'] in self.ids_seen:
-            raise DropItem(f"发现重复产品: {item!r}")
+            raise DropItem(f"发现重复产品: {item['pid']}")
         else:
             self.ids_seen.add(adapter['pid'])
             return item
@@ -64,6 +64,6 @@ class SalesFilterPipeline:
     def process_item(self, item, spider):
         adapter = ItemAdapter(item)
         if not adapter['sales']:
-            raise DropItem(f"{item['pid']}没有销量,直接丢弃: {item!r}")
+            raise DropItem(f"{item['pid']}没有销量,直接丢弃")
         else:
             return item
