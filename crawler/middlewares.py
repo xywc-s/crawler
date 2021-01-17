@@ -3,6 +3,8 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+import base64
+
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter, is_item
 from scrapy import signals
@@ -112,9 +114,23 @@ class UAMiddleware(object):
 
 class ProxyMiddleware(object):
     def process_request(self, request, spider):
-        try:
-            ip = DB().random_ip()
-            proxy = f"http://{ip['ip']}:{ip['port']}"
-            request.meta['proxy'] = proxy
-        except Exception as e:
-            raise e
+        # TODO: 改到配置里面去
+        proxyUser = "667631934742351872"
+        proxyPass = "3OlmYkWs"
+        proxyHost = "http-dynamic.xiaoxiangdaili.com"
+        proxyPort = "10030"
+
+        proxyServer = "http://%(host)s:%(port)s" % {
+            "host" : proxyHost,
+            "port" : proxyPort
+        }
+        proxyAuth = "Basic " + base64.urlsafe_b64encode(bytes((proxyUser + ":" + proxyPass), "ascii")).decode("utf8")
+
+        request.meta["proxy"] = proxyServer
+        request.headers["Proxy-Authorization"] = proxyAuth
+        # try:
+        #     ip = DB().random_ip()
+        #     proxy = f"http://{ip['ip']}:{ip['port']}"
+        #     request.meta['proxy'] = proxy
+        # except Exception as e:
+        #     raise e

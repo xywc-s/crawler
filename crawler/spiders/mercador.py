@@ -9,24 +9,38 @@ class MercadorSpider(scrapy.Spider):
     allow_donmin = ['listado.mercadorlibre.com', 'exercise.kingname.info']
     db = DB().db
     
+    # 爬取策略根据指定策略参数strategy和当前关键词历史决定
+    # 如果有爬取历史，则考虑指定策略
+    # 如果没有爬取历史，则默认完整爬取策略
+    # strategy:
+    # 0: 仅仅追踪有结果的数据
+    # 1: 完整爬取关键词所有结果
     def start_requests(self):
-        if not self.keyword:
-            raise Exception('没有提供要抓取的关键词')
+        strategy = 0
+        try:
+            strategy = int(self.strategy)
+            print(f'使用指定策略：{strategy}')
+        except Exception as e:
+            print('使用默认追踪策略')
+
         col = f'kw-{self.keyword}'
         cols = self.db.list_collection_names(filter={"name":{"$regex":r"^kw-"}})
         if not col in cols:
             yield scrapy.Request(f'https://listado.mercadolibre.com.mx/{self.keyword}')
         else:
-            docs_cursor = self.db[col].aggregate([{'$group': {'_id': { 'pid': '$pid' }, 'pid': {'$last': '$pid'} ,  'src': {'$last': '$src'}, 'sales': {'$last': '$sales'}}},{'$match': {'sales': {'$gt': 0}}}])
-            docs = list(docs_cursor)
-            if not len(docs) > 0:
+            if strategy:
                 yield scrapy.Request(f'https://listado.mercadolibre.com.mx/{self.keyword}')
             else:
-                for doc in docs:
-                    item = CrawlerItem()
-                    item['src'] = doc['src']
-                    item['pid'] = doc['pid']
-                    yield scrapy.Request(item['src'],self.parse_item,cb_kwargs={'item':item})
+                docs_cursor = self.db[col].aggregate([{'$group': {'_id': { 'pid': '$pid' }, 'pid': {'$last': '$pid'} ,  'src': {'$last': '$src'}, 'sales': {'$last': '$sales'}}},{'$match': {'sales': {'$gt': 0}}}])
+                docs = list(docs_cursor)
+                if not len(docs) > 0:
+                    yield scrapy.Request(f'https://listado.mercadolibre.com.mx/{self.keyword}')
+                else:
+                    for doc in docs:
+                        item = CrawlerItem()
+                        item['src'] = doc['src']
+                        item['pid'] = doc['pid']
+                        yield scrapy.Request(item['src'],self.parse_item,cb_kwargs={'item':item})
 
     def parse(self, response):
         # 当前页产品处理
