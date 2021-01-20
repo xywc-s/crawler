@@ -12,7 +12,7 @@ from crawler.settings import (MONGO_DATABASE, MONGO_HOST, MONGO_PORT,
 
 class DB:
 
-    def __init__(self, uri=MONGO_URI, db_name=MONGO_DATABASE):
+    def __init__(self, host=MONGO_HOST, port=MONGO_PORT, username=MONGO_USER, password=MONGO_PWD, db_name=MONGO_DATABASE):
         self.client = pymongo.MongoClient(
             host=MONGO_HOST,
             port=MONGO_PORT,
