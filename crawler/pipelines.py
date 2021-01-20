@@ -6,26 +6,19 @@
 
 from datetime import datetime
 
-import pymongo
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
+
+from crawler.db import DB
 
 
 class CrawlerPipeline:
 
     items = []
 
-    def __init__(self, mongo_uri, mongo_db):
-        self.mongo_uri = mongo_uri
-        self.mongo_db = mongo_db
-
-    @classmethod
-    def from_crawler(cls, crawler):
-        return cls(
-            mongo_uri=crawler.settings.get('MONGO_URI'),
-            mongo_db=crawler.settings.get('MONGO_DATABASE')
-        )
+    def __init__(self, mongo=DB):
+        self.db = mongo().db
 
     def process_item(self, item, spider):
         adapter = ItemAdapter(item)
@@ -35,9 +28,7 @@ class CrawlerPipeline:
         return f"成功抓取关键词 [ {spider.keyword} ] 下的产品 {item['pid']} "
 
     def open_spider(self, spider):
-        self.client = pymongo.MongoClient(self.mongo_uri)
-        self.db = self.client[self.mongo_db]
-        print(f'爬虫{spider.name}已打开,数据库{self.mongo_db}已连接')
+        print(f'爬虫{spider.name}已打开,数据库已连接')
 
     def close_spider(self, spider):
         if(self.items):

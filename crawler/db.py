@@ -14,11 +14,11 @@ class DB:
 
     def __init__(self, host=MONGO_HOST, port=MONGO_PORT, username=MONGO_USER, password=MONGO_PWD, db_name=MONGO_DATABASE):
         self.client = pymongo.MongoClient(
-            host=MONGO_HOST,
-            port=MONGO_PORT,
-            username=MONGO_USER,
-            password=MONGO_PWD,
-            authSource=MONGO_DATABASE
+            host=host,
+            port=port,
+            username=username,
+            password=password,
+            authSource=db_name
         )
         self.db = self.client[MONGO_DATABASE]
 
