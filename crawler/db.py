@@ -6,13 +6,20 @@ import random
 
 import pymongo
 
-from crawler.settings import MONGO_DATABASE, MONGO_URI
+from crawler.settings import (MONGO_DATABASE, MONGO_HOST, MONGO_PORT,
+                              MONGO_PWD, MONGO_USER)
 
 
 class DB:
 
     def __init__(self, uri=MONGO_URI, db_name=MONGO_DATABASE):
-        self.client = pymongo.MongoClient(MONGO_URI)
+        self.client = pymongo.MongoClient(
+            host=MONGO_HOST,
+            port=MONGO_PORT,
+            username=MONGO_USER,
+            password=MONGO_PWD,
+            authSource=MONGO_DATABASE
+        )
         self.db = self.client[MONGO_DATABASE]
 
     def __create_ttl(self, collect, column):
