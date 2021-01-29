@@ -58,12 +58,10 @@ class MercadorSpider(scrapy.Spider):
             yield scrapy.Request(url, self.parse)
 
     def parse_item(self, response, item):
-        imgs = response.css('.ui-pdp-thumbnail__picture img').xpath('./@src').getall()
-        if imgs and len(imgs)>0:
-            item['img'] = imgs[0]
+        item['img'] = response.css('.ui-pdp-thumbnail__picture img').xpath('@src').get()
         sales = response.css('.ui-pdp-subtitle::text').re_first('\d+')
         item['sales'] = int(sales) if sales else 0 
         item['title'] = response.css('.ui-pdp-title::text').get()
-        item['price'] = response.css('meta[itemprop="price"]').attrib['content']
+        item['price'] = response.css('meta[itemprop="price"]').xpath('@content').get()
         item['stock'] = response.css('span[class*="quantity__available"]::text').re_first('\d+')
         yield item
