@@ -64,7 +64,7 @@ class MercadorSpider(scrapy.Spider):
             item['price'] = response.css('meta[itemprop="price"]').xpath('@content').get()
         else:
             item['img'] = response.xpath("//img[@class='ui-pdp-image ui-pdp-gallery--horizontal']/@src").get()
-            item['price'] = response.css("//div[@class='ui-pdp-price__second-line']//span[@class='price-tag-fraction']/text()").get()
+            item['price'] = response.xpath("//div[@class='ui-pdp-price__second-line']//span[@class='price-tag-fraction']/text()").get()
         
         sales = response.css('.ui-pdp-subtitle::text').re_first('\d+')
         item['sales'] = int(sales) if sales else 0 
