@@ -62,12 +62,14 @@ class MercadorSpider(scrapy.Spider):
         if(img_pc):
             item['img'] = img_pc
             item['price'] = response.css('meta[itemprop="price"]').xpath('@content').get()
+            item['stock'] = response.css('span[class*="quantity__available"]::text').re_first('\d+')
+
         else:
             item['img'] = response.xpath("//img[@class='ui-pdp-image ui-pdp-gallery--horizontal']/@src").get()
             item['price'] = response.xpath("//div[@class='ui-pdp-price__second-line']//span[@class='price-tag-fraction']/text()").get()
+            item['stock'] = response.css('.ui-pdp-action-row__subtitle::text').re_first('\d+')
         
         sales = response.css('.ui-pdp-subtitle::text').re_first('\d+')
         item['sales'] = int(sales) if sales else 0 
         item['title'] = response.css('.ui-pdp-title::text').get()
-        item['stock'] = response.css('span[class*="quantity__available"]::text').re_first('\d+')
         yield item
