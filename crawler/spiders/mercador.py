@@ -72,4 +72,7 @@ class MercadorSpider(scrapy.Spider):
         sales = response.css('.ui-pdp-subtitle::text').re_first('\d+')
         item['sales'] = int(sales) if sales else 0 
         item['title'] = response.css('.ui-pdp-title::text').get()
+        if not item['title']:
+            self.logger.warning('headers \n',response.request.headers)
+            self.logger.warning('text',response.text)
         yield item
