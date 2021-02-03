@@ -75,5 +75,5 @@ class MercadorSpider(scrapy.Spider):
         item['sales'] = int(sales) if sales else 0 
         item['title'] = response.css('.ui-pdp-title::text').get()
         if not item['title']:
-            self.logger.warning('res:\n', pprint(response))
+            self.logger.warning('res:\n', pprint.pformat(response))
         yield item
