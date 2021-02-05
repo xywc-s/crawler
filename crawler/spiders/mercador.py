@@ -1,4 +1,6 @@
 import pprint
+import random
+import re
 
 import scrapy
 from crawler.db import DB
@@ -74,6 +76,6 @@ class MercadorSpider(scrapy.Spider):
         sales = response.css('.ui-pdp-subtitle::text').re_first('\d+')
         item['sales'] = int(sales) if sales else 0 
         item['title'] = response.css('.ui-pdp-title::text').get()
-        if not item['title']:
-            self.logger.warning(pprint.pformat(response))
+        item['src'] = response.url
+
         yield item
